@@ -7,7 +7,9 @@ import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence
 import com.cobblemon.mod.common.pokemon.Nature
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
-import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves
+import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.config
+import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.debug
+import kotlin.random.Random.Default.nextDouble
 
 class SynchronizedNature(val player: ServerPlayerEntity) : SpawningInfluence {
     override fun affectAction(action: SpawnAction<*>) {
@@ -16,19 +18,29 @@ class SynchronizedNature(val player: ServerPlayerEntity) : SpawningInfluence {
 
         val nature = getSynchronizedNature(player)?.name?.namespace ?: return
 
-        action.props.nature = nature
+        if (nextDouble() >= config.synchronizeChance) {
+            action.props.nature = nature
+        }
     }
 
     private fun getSynchronizedNature(player: PlayerEntity): Nature? {
         val playerPartyStore = Cobblemon.storage.getParty(player.uuid)
-        if (CobblemonFieldMoves.config.mustBeFirst) {
+        if (config.mustBeFirst) {
             val firstPartyMember = playerPartyStore.firstOrNull()
             if (firstPartyMember?.ability?.name != "synchronize") {
+                debug("First party member does not have synchronize for ${player.name.string}")
                 return null
             }
             return firstPartyMember.nature
         }
 
-        return playerPartyStore.find { it.ability.name == "synchronize" }?.nature
+        val synchronizePartyMember = playerPartyStore.find { it.ability.name == "synchronize" }
+        if (synchronizePartyMember == null) {
+            debug("No party member has synchronize for ${player.name.string}")
+            return null
+        }
+
+        debug("${player.name.string}'s ${synchronizePartyMember.species.name} has synchronize and nature ${synchronizePartyMember.nature}")
+        return synchronizePartyMember.nature
     }
 }

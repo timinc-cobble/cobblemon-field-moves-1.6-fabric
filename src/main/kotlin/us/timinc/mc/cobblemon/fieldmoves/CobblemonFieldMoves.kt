@@ -12,11 +12,9 @@ import us.timinc.mc.cobblemon.fieldmoves.config.Config
 import us.timinc.mc.cobblemon.fieldmoves.influences.SynchronizedNature
 import us.timinc.mc.cobblemon.unimplementeditems.config.ConfigBuilder
 
-class CobblemonFieldMoves : ModInitializer {
-    companion object {
-        const val MOD_ID = "field_moves"
-        var config: Config = ConfigBuilder.load(Config::class.java, MOD_ID)
-    }
+object CobblemonFieldMoves : ModInitializer {
+    const val MOD_ID = "field_moves"
+    var config: Config = ConfigBuilder.load(Config::class.java, MOD_ID)
 
     override fun onInitialize() {
         CobblemonEvents.BATTLE_VICTORY.subscribe { evt ->
