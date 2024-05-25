@@ -1,8 +1,6 @@
 package us.timinc.mc.cobblemon.fieldmoves.influences
 
 import com.cobblemon.mod.common.Cobblemon
-import com.cobblemon.mod.common.api.Priority
-import com.cobblemon.mod.common.api.pokemon.PokemonSpecies
 import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnAction
 import com.cobblemon.mod.common.api.spawning.detail.SpawnAction
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence
@@ -11,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves
 
-class SynchronizedNature(val player: ServerPlayerEntity): SpawningInfluence {
+class SynchronizedNature(val player: ServerPlayerEntity) : SpawningInfluence {
     override fun affectAction(action: SpawnAction<*>) {
         if (action !is PokemonSpawnAction) return
         if (action.props.nature != null) return
