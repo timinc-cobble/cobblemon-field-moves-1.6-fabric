@@ -16,9 +16,10 @@ class SynchronizedNature(val player: ServerPlayerEntity) : SpawningInfluence {
         if (action !is PokemonSpawnAction) return
         if (action.props.nature != null) return
 
-        val nature = getSynchronizedNature(player)?.name?.namespace ?: return
+        val nature = getSynchronizedNature(player)?.name?.path ?: return
 
-        if (nextDouble() >= config.synchronizeChance) {
+        if (nextDouble() < config.synchronizeChance) {
+            debug("Setting wild ${action.props.species} to nature $nature")
             action.props.nature = nature
         }
     }
