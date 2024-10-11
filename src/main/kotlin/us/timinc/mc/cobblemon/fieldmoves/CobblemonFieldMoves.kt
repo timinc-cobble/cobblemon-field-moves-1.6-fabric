@@ -9,6 +9,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
 import us.timinc.mc.cobblemon.fieldmoves.config.Config
+import us.timinc.mc.cobblemon.fieldmoves.influences.CuteCharm
 import us.timinc.mc.cobblemon.fieldmoves.influences.SynchronizedNature
 import us.timinc.mc.cobblemon.unimplementeditems.config.ConfigBuilder
 
@@ -55,7 +56,8 @@ object CobblemonFieldMoves : ModInitializer {
                 }
             }
         }
-        PlayerSpawnerFactory.influenceBuilders.add { SynchronizedNature(it) }
+        PlayerSpawnerFactory.influenceBuilders.add(::SynchronizedNature)
+        PlayerSpawnerFactory.influenceBuilders.add(::CuteCharm)
     }
 
     fun debug(msg: String) {
