@@ -5,6 +5,8 @@ import com.cobblemon.mod.common.api.spawning.spawner.PlayerSpawnerFactory
 import net.fabricmc.api.ModInitializer
 import net.minecraft.loot.context.LootContextParameterSet
 import net.minecraft.loot.context.LootContextParameters
+import net.minecraft.registry.RegistryKey
+import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
@@ -26,6 +28,14 @@ object CobblemonFieldMoves : ModInitializer {
                 val vecPos = Vec3d(position.x.toDouble(), position.y.toDouble(), position.z.toDouble())
                 for (battlePokemon in winner.pokemonList) {
                     val pokemon = battlePokemon.effectedPokemon
+                    val ability = pokemon.ability.name
+                    val lootManager = world.server!!.reloadableRegistries
+                    val identifier = modIdentifier("gameplay/${ability}")
+
+                    if (!lootManager.getIds(RegistryKeys.LOOT_TABLE).contains(identifier)) {
+                        debug("$ability does not have a loot table associated with it.")
+                        continue
+                    }
                     debug("Rolling for ${pokemon.ability.name} on ${pokemon.getDisplayName().string}")
 
                     if (!pokemon.heldItem().isEmpty) {
@@ -33,9 +43,7 @@ object CobblemonFieldMoves : ModInitializer {
                         continue
                     }
 
-                    val identifier = Identifier("pickup", "gameplay/${pokemon.ability.name}")
-                    val lootManager = world.server!!.lootManager
-                    val lootTable = lootManager.getLootTable(identifier)
+                    val lootTable = lootManager.getLootTable(RegistryKey.of(RegistryKeys.LOOT_TABLE, identifier))
                     val list = lootTable.generateLoot(
                         LootContextParameterSet(
                             world as ServerWorld,
@@ -45,9 +53,10 @@ object CobblemonFieldMoves : ModInitializer {
                             mapOf(),
                             0F
                         )
-                    )
+                    ).filter { !it.isEmpty }
+                    debug("$list")
 
-                    if (list.isEmpty) {
+                    if (list.isEmpty()) {
                         debug("Attempted to roll for ability ${pokemon.ability.name} but nothing dropped.")
                         continue
                     }
@@ -58,6 +67,10 @@ object CobblemonFieldMoves : ModInitializer {
         }
         PlayerSpawnerFactory.influenceBuilders.add(::SynchronizedNature)
         PlayerSpawnerFactory.influenceBuilders.add(::CuteCharm)
+    }
+
+    fun modIdentifier(name: String): Identifier {
+        return Identifier.of(MOD_ID, name)
     }
 
     fun debug(msg: String) {

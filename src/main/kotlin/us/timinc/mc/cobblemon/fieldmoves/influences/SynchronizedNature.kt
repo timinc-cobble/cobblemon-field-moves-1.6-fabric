@@ -24,8 +24,8 @@ class SynchronizedNature(val player: ServerPlayerEntity) : SpawningInfluence {
         }
     }
 
-    private fun getSynchronizedNature(player: PlayerEntity): Nature? {
-        val playerPartyStore = Cobblemon.storage.getParty(player.uuid)
+    private fun getSynchronizedNature(player: ServerPlayerEntity): Nature? {
+        val playerPartyStore = Cobblemon.storage.getParty(player)
         if (config.mustBeFirst) {
             val firstPartyMember = playerPartyStore.firstOrNull()
             if (firstPartyMember?.ability?.name != "synchronize") {

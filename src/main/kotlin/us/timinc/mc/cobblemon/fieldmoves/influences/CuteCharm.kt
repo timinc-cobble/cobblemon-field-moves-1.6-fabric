@@ -23,6 +23,12 @@ class CuteCharm(val player: ServerPlayerEntity) : SpawningInfluence {
         if (action !is PokemonSpawnAction) return
         if (action.props.gender != null) return
 
+        val gender = getCuteCharmGender(player) ?: return
+        val invertedGender = GENDER_BENDER[gender] ?: run {
+            debug("Gender $gender doesn't have an opposite, cute charm has no effect")
+            return
+        }
+
         val species = action.props.species?.let(PokemonSpecies::getByName) ?: return
         if (species.maleRatio == 1F || species.maleRatio == 0F) {
             debug("Spawning species of $species has a fixed gender, cute charm can't affect")
@@ -34,17 +40,12 @@ class CuteCharm(val player: ServerPlayerEntity) : SpawningInfluence {
             return
         }
 
-        val gender = getCuteCharmGender(player) ?: return
-        val invertedGender = GENDER_BENDER[gender] ?: run {
-            debug("Gender $gender doesn't have an opposite, cute charm has no effect")
-            return
-        }
         debug("Setting wild ${action.props.species} to gender $invertedGender")
         action.props.gender = invertedGender
     }
 
     private fun getCuteCharmGender(player: ServerPlayerEntity): Gender? {
-        val playerPartyStore = Cobblemon.storage.getParty(player.uuid)
+        val playerPartyStore = Cobblemon.storage.getParty(player)
         if (config.mustBeFirst) {
             val firstPartyMember = playerPartyStore.firstOrNull()
             if (firstPartyMember?.ability?.name != "cutecharm") {
