@@ -1,4 +1,4 @@
-package us.timinc.mc.cobblemon.unimplementeditems.config
+package us.timinc.mc.cobblemon.fieldmoves.config
 
 import com.google.gson.GsonBuilder
 import java.io.File
