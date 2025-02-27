@@ -4,11 +4,16 @@ import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.cobblemon.mod.common.pokemon.Pokemon
 import com.cobblemon.mod.common.util.getPlayer
 import com.cobblemon.mod.common.util.party
+import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.item.BundleItem
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.component.BundleContents
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import us.timinc.mc.cobblemon.droploottables.lootconditions.LootConditions
+import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves
 import us.timinc.mc.cobblemon.fieldmoves.droppers.contexts.AbilityDropContext
 
 object CombatAbilityDropper : AbstractAbilityDropper("ability/combat") {
@@ -48,6 +53,15 @@ object CombatAbilityDropper : AbstractAbilityDropper("ability/combat") {
             AbilityDropContext(pokemon.ability)
         ).randomOrNull() ?: return
 
-        pokemon.swapHeldItem(drop)
+        if (CobblemonFieldMoves.config.addDropsToBundles) {
+            for (itemStack in player.inventory.items) {
+                if (!itemStack.`is`(Items.BUNDLE)) continue
+                val bundleContents = BundleContents.Mutable(itemStack.get(DataComponents.BUNDLE_CONTENTS) as BundleContents)
+                bundleContents.tryInsert(drop)
+                itemStack.set(DataComponents.BUNDLE_CONTENTS, bundleContents.toImmutable())
+                if (drop.isEmpty) break
+            }
+        }
+        if (!drop.isEmpty) pokemon.swapHeldItem(drop)
     }
 }
