@@ -5,13 +5,12 @@ import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnAction
 import com.cobblemon.mod.common.api.spawning.detail.SpawnAction
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence
 import com.cobblemon.mod.common.pokemon.Nature
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.config
 import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.debug
 import kotlin.random.Random.Default.nextDouble
 
-class SynchronizedNature(val player: ServerPlayerEntity) : SpawningInfluence {
+class SynchronizedNature(val player: ServerPlayer) : SpawningInfluence {
     override fun affectAction(action: SpawnAction<*>) {
         if (action !is PokemonSpawnAction) return
         if (action.props.nature != null) return
@@ -24,7 +23,7 @@ class SynchronizedNature(val player: ServerPlayerEntity) : SpawningInfluence {
         }
     }
 
-    private fun getSynchronizedNature(player: ServerPlayerEntity): Nature? {
+    private fun getSynchronizedNature(player: ServerPlayer): Nature? {
         val playerPartyStore = Cobblemon.storage.getParty(player)
         if (config.mustBeFirst) {
             val firstPartyMember = playerPartyStore.firstOrNull()

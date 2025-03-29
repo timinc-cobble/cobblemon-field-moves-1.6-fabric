@@ -1,10 +1,12 @@
 {
   "schemaVersion": 1,
   "id": "cobblemon-field-moves",
-  "version": "1.6-fabric-1.0.0",
+  "version": "1.6-fabric-1.1.0",
   "name": "Cobblemon Field Moves",
   "description": "Adds the in-world effects of field moves and abilities to Cobblemon.",
-  "authors": ["TimInc aka Timothy Metcalfe"],
+  "authors": [
+    "TimInc aka Timothy Metcalfe"
+  ],
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
@@ -18,6 +20,7 @@
   "depends": {
     "java": ">=21",
     "minecraft": "1.21.1",
-    "cobblemon": ">=1.6.0 <1.7.0"
+    "cobblemon": ">=1.6.0 <1.7.0",
+    "cobblemon_droploottables": ">=1.6-fabric-1.1.0"
   }
 }

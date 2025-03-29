@@ -6,12 +6,12 @@ import com.cobblemon.mod.common.api.spawning.detail.PokemonSpawnAction
 import com.cobblemon.mod.common.api.spawning.detail.SpawnAction
 import com.cobblemon.mod.common.api.spawning.influence.SpawningInfluence
 import com.cobblemon.mod.common.pokemon.Gender
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.config
 import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.debug
 import kotlin.random.Random.Default.nextDouble
 
-class CuteCharm(val player: ServerPlayerEntity) : SpawningInfluence {
+class CuteCharm(val player: ServerPlayer) : SpawningInfluence {
     companion object {
         val GENDER_BENDER = mapOf(
             Gender.MALE to Gender.FEMALE,
@@ -44,7 +44,7 @@ class CuteCharm(val player: ServerPlayerEntity) : SpawningInfluence {
         action.props.gender = invertedGender
     }
 
-    private fun getCuteCharmGender(player: ServerPlayerEntity): Gender? {
+    private fun getCuteCharmGender(player: ServerPlayer): Gender? {
         val playerPartyStore = Cobblemon.storage.getParty(player)
         if (config.mustBeFirst) {
             val firstPartyMember = playerPartyStore.firstOrNull()
@@ -55,7 +55,7 @@ class CuteCharm(val player: ServerPlayerEntity) : SpawningInfluence {
             return firstPartyMember.gender
         }
 
-        val cuteCharmPartyMember = playerPartyStore.find { it.ability.name == "cutecharm"}
+        val cuteCharmPartyMember = playerPartyStore.find { it.ability.name == "cutecharm" }
         if (cuteCharmPartyMember == null) {
             debug("No party member has cute charm for ${player.name.string}")
             return null
