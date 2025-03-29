@@ -2,8 +2,6 @@ package us.timinc.mc.cobblemon.fieldmoves.droppers
 
 import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.cobblemon.mod.common.pokemon.Pokemon
-import com.cobblemon.mod.common.util.getPlayer
-import com.cobblemon.mod.common.util.party
 import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -13,6 +11,7 @@ import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import us.timinc.mc.cobblemon.droploottables.lootconditions.LootConditions
 import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves
+import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.debug
 import us.timinc.mc.cobblemon.fieldmoves.droppers.contexts.AbilityDropContext
 
 object CombatAbilityDropper : AbstractAbilityDropper("ability/combat") {
@@ -22,19 +21,20 @@ object CombatAbilityDropper : AbstractAbilityDropper("ability/combat") {
                 event.winners.flatMap { it.pokemonList }.firstNotNullOfOrNull { it.entity?.level() } ?: return@subscribe
             if (level !is ServerLevel) return@subscribe
             for (winner in event.winners) {
-                for (playerUuid in winner.getPlayerUUIDs()) {
-                    val player = playerUuid.getPlayer() ?: continue
-                    player.party().forEach { pokemon ->
-                        val wasInBattle = winner.pokemonList.any { it.effectedPokemon.uuid == pokemon.uuid }
-                        processDrop(level, player, pokemon, wasInBattle)
-                    }
+                for (battlePokemon in winner.pokemonList) {
+                    val pokemon = battlePokemon.effectedPokemon
+                    val player = pokemon.getOwnerPlayer() ?: continue
+                    val wasInBattle = battlePokemon.facedOpponents.isNotEmpty()
+                    processDrop(level, player, pokemon, wasInBattle)
                 }
             }
         }
     }
 
-    fun processDrop(level: ServerLevel, player: ServerPlayer, pokemon: Pokemon, wasInBattle: Boolean) {
+    private fun processDrop(level: ServerLevel, player: ServerPlayer, pokemon: Pokemon, wasInBattle: Boolean) {
         if (!pokemon.heldItem().isEmpty) return
+
+        debug("Rolling on ${pokemon.species.name}'s ${pokemon.ability.name}")
 
         val lootParams = LootParams(
             level,
@@ -51,6 +51,8 @@ object CombatAbilityDropper : AbstractAbilityDropper("ability/combat") {
             lootParams,
             AbilityDropContext(pokemon.ability)
         ).randomOrNull() ?: return
+
+        debug("Got $drop for ${pokemon.species.name}'s ${pokemon.ability.name}")
 
         if (CobblemonFieldMoves.config.addDropsToBundles) {
             for (itemStack in player.inventory.items) {
