@@ -14,7 +14,7 @@ import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves
 import us.timinc.mc.cobblemon.fieldmoves.CobblemonFieldMoves.debug
 import us.timinc.mc.cobblemon.fieldmoves.droppers.contexts.AbilityDropContext
 
-object CombatAbilityDropper : AbstractAbilityDropper("ability/combat") {
+object CombatAbilityDropper : AbstractAbilityDropper("ability/victory") {
     override fun load() {
         CobblemonEvents.BATTLE_VICTORY.subscribe { event ->
             val level =
