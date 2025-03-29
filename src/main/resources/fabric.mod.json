@@ -19,6 +19,6 @@
     "java": ">=21",
     "minecraft": "1.21.1",
     "cobblemon": ">=1.6.0 <1.7.0",
-    "droploottables": ">=1.6-fabric-1.1.0"
+    "cobblemon_droploottables": ">=1.6-fabric-1.1.0"
   }
 }
