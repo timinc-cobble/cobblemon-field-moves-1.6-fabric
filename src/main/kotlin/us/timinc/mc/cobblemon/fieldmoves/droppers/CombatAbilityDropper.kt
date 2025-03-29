@@ -7,7 +7,6 @@ import com.cobblemon.mod.common.util.party
 import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.item.BundleItem
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.BundleContents
 import net.minecraft.world.level.storage.loot.LootParams
@@ -56,7 +55,8 @@ object CombatAbilityDropper : AbstractAbilityDropper("ability/combat") {
         if (CobblemonFieldMoves.config.addDropsToBundles) {
             for (itemStack in player.inventory.items) {
                 if (!itemStack.`is`(Items.BUNDLE)) continue
-                val bundleContents = BundleContents.Mutable(itemStack.get(DataComponents.BUNDLE_CONTENTS) as BundleContents)
+                val bundleContents =
+                    BundleContents.Mutable(itemStack.get(DataComponents.BUNDLE_CONTENTS) as BundleContents)
                 bundleContents.tryInsert(drop)
                 itemStack.set(DataComponents.BUNDLE_CONTENTS, bundleContents.toImmutable())
                 if (drop.isEmpty) break

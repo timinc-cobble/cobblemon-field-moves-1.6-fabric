@@ -4,7 +4,9 @@
   "version": "1.6-fabric-1.0.0",
   "name": "Cobblemon Field Moves",
   "description": "Adds the in-world effects of field moves and abilities to Cobblemon.",
-  "authors": ["TimInc aka Timothy Metcalfe"],
+  "authors": [
+    "TimInc aka Timothy Metcalfe"
+  ],
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
